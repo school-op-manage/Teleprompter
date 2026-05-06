@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>NDA PrompterPro — Interview Preparation</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   RESET & CUSTOM PROPERTIES
+═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+:root {
+  --bg:           #07090d;
+  --surface:      #0d1117;
+  --panel:        #111820;
+  --card:         #161e28;
+  --border:       rgba(255,255,255,0.08);
+  --border-soft:  rgba(255,255,255,0.04);
+  --gold:         #c9a84c;
+  --gold-bright:  #ddb95a;
+  --gold-dim:     rgba(201,168,76,0.14);
+  --gold-glow:    rgba(201,168,76,0.07);
+  --text:         #edeae0;
+  --text-dim:     rgba(237,234,224,0.65);
+  --muted:        #4e5a68;
+  --danger:       #d95f5f;
+  --green:        #4aaa7a;
+  --red-fade:     rgba(217,95,95,0.1);
+  --green-fade:   rgba(74,170,122,0.1);
+  --fade-top:     rgba(7,9,13,0.96);
+  --fade-bot:     rgba(7,9,13,0.96);
+  --font-size:    clamp(1.4rem, 3.5vw, 2.6rem);
+  --line-height:  1.8;
+  --header-h:     112px;  /* two rows */
+  --controls-h:   72px;
+  --footer-h:     32px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Source Serif 4', Georgia, serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════════════════ */
+#app {
+  display: grid;
+  grid-template-rows: auto 2px 1fr auto auto;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════
+   HEADER — TWO ROW SYSTEM
+═══════════════════════════════════════════════════ */
+#header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  z-index: 20;
+}
+
+/* ── Row 1: Branding + Topic + Action Buttons ── */
+.hrow1 {
+  display: flex;
+  align-items: center;
+  padding: 9px 18px;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-soft);
+  flex-wrap: nowrap;
+  min-height: 52px;
+}
+
+/* Logo */
+#logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+}
+
+.logo-badge {
+  width: 34px; height: 34px;
+  border: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.logo-badge::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(201,168,76,0.2);
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.logo-main {
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.logo-main span { color: var(--gold); }
+
+.logo-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* Topic selector */
+.topic-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.topic-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--muted);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  display: none;
+}
+
+@media (min-width: 640px) { .topic-label { display: block; } }
+
+#topic-select {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  padding: 6px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+  max-width: 320px;
+  appearance: none;
+  outline: none;
+  letter-spacing: 0.02em;
+  transition: border-color 0.2s;
+}
+
+#topic-select:focus { border-color: var(--gold); }
+
+/* Right-side header action buttons */
+.hrow1-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+/* Status badge */
+#status-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--panel);
+  border-radius: 2px;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+#status-badge.running { color: var(--green); border-color: rgba(74,170,122,0.4); background: var(--green-fade); }
+#status-badge.paused  { color: var(--gold);  border-color: rgba(201,168,76,0.4);  background: var(--gold-dim); }
+
+/* ── Row 2: Sliders + Toggles ── */
+.hrow2 {
+  display: flex;
+  align-items: center;
+  padding: 7px 18px;
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  min-height: 46px;
+}
+
+.hrow2::-webkit-scrollbar { display: none; }
+
+/* Divider pipe */
+.h-div {
+  width: 1px;
+  height: 22px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* Slider pill */
+.h-slider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 5px 11px;
+  height: 32px;
+}
+
+.h-slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.h-slider-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  color: var(--gold);
+  min-width: 22px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 80px;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+input[type="range"].wide { width: 70px; }
+
+@media (min-width: 900px) {
+  input[type="range"] { width: 100px; }
+  input[type="range"].wide { width: 90px; }
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+  box-shadow: 0 0 6px rgba(201,168,76,0.5);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: none;
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════════════
+   BUTTONS — UNIFIED SYSTEM
+═══════════════════════════════════════════════════ */
+.btn {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 32px;
+}
+
+.btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+.btn:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.06);
+}
+
+.btn:active { transform: scale(0.96); }
+
+.btn.gold {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+  font-weight: 600;
+}
+
+.btn.gold:hover { background: var(--gold-bright); border-color: var(--gold-bright); }
+
+.btn.danger:hover { color: var(--danger); border-color: var(--danger); background: var(--red-fade); }
+
+.btn.toggle-on {
+  color: var(--gold);
+  border-color: rgba(201,168,76,0.45);
+  background: var(--gold-dim);
+}
+
+/* icon-only on mobile */
+.btn-label { display: inline; }
+@media (max-width: 480px) { .btn-label { display: none; } }
+
+/* ═══════════════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════════════ */
+#progress-bar-wrap {
+  background: var(--border-soft);
+  position: relative;
+  z-index: 15;
+}
+
+#progress-bar {
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 100%);
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+/* ═══════════════════════════════════════════════════
+   EDITOR PANEL (OVERLAY)
+═══════════════════════════════════════════════════ */
+#editor-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  padding: clamp(16px, 4vw, 32px);
+  gap: 14px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+#editor-panel.hidden { display: none; }
+
+.ep-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 14px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ep-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.ep-title span { color: var(--gold); }
+
+.ep-field { display: flex; flex-direction: column; gap: 6px; }
+
+.ep-field label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.ep-field input,
+.ep-field textarea {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Source Serif 4', serif;
+  font-size: 15px;
+  padding: 10px 14px;
+  border-radius: 3px;
+  outline: none;
+  resize: vertical;
+  line-height: 1.6;
+  transition: border-color 0.2s;
+  user-select: text;
+  width: 100%;
+}
+
+.ep-field input:focus,
+.ep-field textarea:focus { border-color: var(--gold); }
+
+.ep-field textarea { min-height: 200px; max-height: 40vh; }
+
+.ep-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ep-actions .btn { font-size: 13px; padding: 8px 18px; height: 36px; }
+.ep-actions .btn.gold { min-width: 160px; justify-content: center; }
+
+/* Sample chips */
+.chips-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.chips-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  padding: 5px 11px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--panel);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.18s;
+}
+
+.chip:hover { color: var(--gold); border-color: rgba(201,168,76,0.5); }
+
+/* ═══════════════════════════════════════════════════
+   RENAME MODAL
+═══════════════════════════════════════════════════ */
+#rename-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 70;
+  background: rgba(7,9,13,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+#rename-modal.hidden { display: none; }
+
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: clamp(20px, 4vw, 36px);
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-box h3 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.modal-box h3 span { color: var(--gold); }
+
+.modal-box input {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  padding: 10px 14px;
+  border-radius: 3px;
+  outline: none;
+  user-select: text;
+  width: 100%;
+}
+
+.modal-box input:focus { border-color: var(--gold); }
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.modal-actions .btn { font-size: 13px; padding: 8px 18px; height: 36px; }
+.modal-actions .btn.gold { flex: 1; justify-content: center; }
+
+/* ═══════════════════════════════════════════════════
+   TELEPROMPTER AREA
+═══════════════════════════════════════════════════ */
+#prompter-wrap {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Fade overlays */
+#prompter-wrap::before,
+#prompter-wrap::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: clamp(60px, 10vh, 130px);
+  z-index: 10;
+  pointer-events: none;
+}
+
+#prompter-wrap::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--fade-top), transparent);
+}
+
+#prompter-wrap::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--fade-bot), transparent);
+}
+
+/* Guide line */
+#reading-line {
+  position: absolute;
+  left: 5%; right: 5%;
+  top: 40%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold) 30%, var(--gold) 70%, transparent);
+  z-index: 11;
+  pointer-events: none;
+  opacity: 0.45;
+  transition: opacity 0.3s;
+}
+
+#reading-line.hidden { opacity: 0; }
+
+#scroll-container {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+#prompter-content {
+  padding: clamp(30vh, 40vh, 45vh) clamp(5%, 12%, 18%) clamp(40vh, 50vh, 55vh);
+  text-align: center;
+  will-change: transform;
+}
+
+#prompter-content.mirror { transform: scaleX(-1); }
+
+#display-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: clamp(1.5rem, 4vh, 3rem);
+  opacity: 0.85;
+}
+
+#display-text {
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  color: var(--text);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+#display-text p { margin-bottom: 1.4em; }
+
+/* ═══════════════════════════════════════════════════
+   BOTTOM TRANSPORT CONTROLS
+═══════════════════════════════════════════════════ */
+#controls {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  z-index: 20;
+}
+
+/* Large play/pause */
+#btn-play {
+  font-size: 14px;
+  padding: 8px 26px;
+  height: 40px;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ctrl-div {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* Kbd hint */
+#kbd-hint {
+  width: 100%;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-top: 2px;
+  opacity: 0.55;
+}
+
+@media (max-width: 600px) { #kbd-hint { display: none; } }
+
+kbd {
+  display: inline-block;
+  padding: 1px 4px;
+  border: 1px solid var(--muted);
+  border-radius: 2px;
+  font-size: 8.5px;
+  color: var(--muted);
+}
+
+/* ═══════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════ */
+#footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border-soft);
+  padding: 5px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+#footer span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+#footer span em {
+  color: rgba(201,168,76,0.7);
+  font-style: normal;
+}
+
+/* ═══════════════════════════════════════════════════
+   COUNTDOWN OVERLAY
+═══════════════════════════════════════════════════ */
+#countdown-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(7,9,13,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+#countdown-overlay.show { opacity: 1; pointer-events: all; }
+
+#countdown-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(6rem, 18vw, 12rem);
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  animation: pulse-count 0.9s ease-out;
+}
+
+@keyframes pulse-count {
+  0%   { transform: scale(1.5); opacity: 0.2; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════
+   FULLSCREEN — auto-hide header/controls
+═══════════════════════════════════════════════════ */
+:fullscreen #header { opacity: 0; transition: opacity 0.4s; }
+:fullscreen #controls { opacity: 0; transition: opacity 0.4s; }
+:fullscreen #footer { opacity: 0; transition: opacity 0.4s; }
+:fullscreen #app:hover #header,
+:fullscreen #app:hover #controls,
+:fullscreen #app:hover #footer { opacity: 1; }
+
+:-webkit-full-screen #header { opacity: 0; transition: opacity 0.4s; }
+:-webkit-full-screen #controls { opacity: 0; transition: opacity 0.4s; }
+:-webkit-full-screen #footer { opacity: 0; transition: opacity 0.4s; }
+:-webkit-full-screen #app:hover #header,
+:-webkit-full-screen #app:hover #controls,
+:-webkit-full-screen #app:hover #footer { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  padding: 7px 18px;
+  border-radius: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════════════
+   MOBILE RESPONSIVE OVERRIDES
+═══════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .hrow1 { padding: 8px 12px; gap: 8px; }
+  .hrow2 { padding: 6px 12px; gap: 8px; }
+  #controls { padding: 8px 12px; gap: 6px; }
+  .logo-sub { display: none; }
+  .logo-badge { width: 30px; height: 30px; font-size: 11px; }
+  #btn-play { min-width: 100px; padding: 7px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ══════════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════════ -->
+  <header id="header">
+
+    <!-- ROW 1: Logo | Topic | [Rename] [Edit] [Status] -->
+    <div class="hrow1">
+
+      <div id="logo">
+        <div class="logo-badge">NDA</div>
+        <div class="logo-text">
+          <span class="logo-main" id="app-name">Prompter<span>Pro</span></span>
+          <span class="logo-sub">Interview Preparation</span>
+        </div>
+      </div>
+
+      <div class="topic-wrap">
+        <span class="topic-label">Topic</span>
+        <select id="topic-select">
+          <option value="custom">— Custom / Paste Your Own —</option>
+          <option value="why_nda">Why do you want to join the NDA?</option>
+          <option value="tell_yourself">Tell me about yourself.</option>
+          <option value="strengths">Strengths and weaknesses.</option>
+          <option value="serve_nation">Why do you want to serve the nation?</option>
+          <option value="challenge">Describe a challenge you overcame.</option>
+          <option value="current_affairs">India's defence priorities.</option>
+          <option value="leadership">Describe a time you showed leadership.</option>
+          <option value="role_model">Who is your role model and why?</option>
+        </select>
+      </div>
+
+      <div class="hrow1-actions">
+        <div id="status-badge">● STOPPED</div>
+
+        <!-- Rename button -->
+        <button class="btn" id="btn-rename" title="Rename App (N)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span class="btn-label">Rename</span>
+        </button>
+
+        <!-- Edit Script button -->
+        <button class="btn gold" id="btn-edit" title="Edit Script (E)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <span class="btn-label">Edit Script</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ROW 2: Speed | Font Size | Line Spacing | Timer | Mirror | Guide | Fullscreen -->
+    <div class="hrow2">
+
+      <!-- Speed -->
+      <div class="h-slider">
+        <span class="h-slider-label">Speed</span>
+        <input type="range" id="sl-speed" min="1" max="10" value="3" step="0.5">
+        <span class="h-slider-val" id="speed-val">3</span>
+      </div>
+
+      <div class="h-div"></div>
+
+      <!-- Font Size -->
+      <div class="h-slider">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);flex-shrink:0"><text x="3" y="17" font-size="14" fill="currentColor" stroke="none">A</text><text x="13" y="20" font-size="9" fill="currentColor" stroke="none">a</text></svg>
+        <span class="h-slider-label">Font</span>
+        <input type="range" class="wide" id="sl-font" min="1.2" max="5" value="2.4" step="0.2">
+        <span class="h-slider-val" id="font-val">2.4</span>
+      </div>
+
+      <div class="h-div"></div>
+
+      <!-- Line Spacing -->
+      <div class="h-slider">
+        <span class="h-slider-label">Spacing</span>
+        <input type="range" class="wide" id="sl-spacing" min="1.2" max="3.0" value="1.8" step="0.05">
+        <span class="h-slider-val" id="spacing-val">1.8</span>
+      </div>
+
+      <div class="h-div"></div>
+
+      <!-- Timer countdown toggle -->
+      <button class="btn toggle-on" id="btn-timer" title="Toggle Countdown Timer (T)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 15.5 15.5"/></svg>
+        <span class="btn-label">Timer</span>
+      </button>
+
+      <!-- Mirror -->
+      <button class="btn" id="btn-mirror" title="Mirror Text (M)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h3M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3M12 3v18"/></svg>
+        <span class="btn-label">Mirror</span>
+      </button>
+
+      <!-- Guide Line -->
+      <button class="btn toggle-on" id="btn-line" title="Guide Line (L)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6" stroke-dasharray="4 2"/><line x1="3" y1="18" x2="21" y2="18" stroke-dasharray="4 2"/></svg>
+        <span class="btn-label">Guide</span>
+      </button>
+
+      <!-- Fullscreen -->
+      <button class="btn" id="btn-fullscreen" title="Fullscreen (F)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3"/></svg>
+        <span class="btn-label">Fullscreen</span>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- PROGRESS BAR -->
+  <div id="progress-bar-wrap">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       EDITOR PANEL (full-screen overlay)
+  ══════════════════════════════════════════════ -->
+  <div id="editor-panel" class="hidden">
+
+    <div class="ep-header">
+      <div class="ep-title">✏ Edit <span>Script</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn gold ep-done" id="btn-done-edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Done — Load Script
+        </button>
+        <button class="btn" id="btn-cancel-edit">Cancel</button>
+        <button class="btn danger" id="btn-clear-text">Clear</button>
+      </div>
+    </div>
+
+    <div class="ep-field">
+      <label>Topic / Heading</label>
+      <input type="text" id="edit-title" placeholder="e.g. Why do you want to join the NDA?" />
+    </div>
+
+    <div class="ep-field">
+      <label>Script (paste or type your speech)</label>
+      <textarea id="edit-text" placeholder="Type or paste your full script here...&#10;&#10;Use blank lines between paragraphs for natural pauses.&#10;Speak slowly and clearly when recording."></textarea>
+    </div>
+
+    <div>
+      <div class="chips-label">Quick Load Sample →</div>
+      <div class="chips-row" id="sample-chips"></div>
+    </div>
+
+    <div id="kbd-hint" style="margin-top:2px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--muted);opacity:.5;">
+      <kbd>Space</kbd> Play/Pause &nbsp;
+      <kbd>↑↓</kbd> Speed &nbsp;
+      <kbd>+−</kbd> Font &nbsp;
+      <kbd>M</kbd> Mirror &nbsp;
+      <kbd>F</kbd> Fullscreen &nbsp;
+      <kbd>R</kbd> Reset &nbsp;
+      <kbd>L</kbd> Guide &nbsp;
+      <kbd>T</kbd> Timer &nbsp;
+      <kbd>N</kbd> Rename &nbsp;
+      <kbd>E</kbd> Edit
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       RENAME MODAL
+  ══════════════════════════════════════════════ -->
+  <div id="rename-modal" class="hidden">
+    <div class="modal-box">
+      <h3>Rename <span>App</span></h3>
+      <input type="text" id="rename-input" placeholder="e.g. PrompterPro" maxlength="30" />
+      <div class="modal-actions">
+        <button class="btn gold" id="btn-rename-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Save Name
+        </button>
+        <button class="btn" id="btn-rename-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       TELEPROMPTER READING AREA
+  ══════════════════════════════════════════════ -->
+  <div id="prompter-wrap">
+    <div id="reading-line"></div>
+    <div id="scroll-container">
+      <div id="prompter-content">
+        <div id="display-title">— Select a Topic Above —</div>
+        <div id="display-text">
+          <p>Tap <strong style="color:var(--gold)">Edit Script</strong> to enter your content,<br>or choose a sample from the topic dropdown.</p>
+          <p>Press <strong style="color:var(--gold)">▶ Start</strong> when you are ready.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Countdown -->
+    <div id="countdown-overlay">
+      <div id="countdown-num">3</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       BOTTOM TRANSPORT CONTROLS
+  ══════════════════════════════════════════════ -->
+  <div id="controls">
+    <div class="ctrl-group">
+      <button class="btn gold" id="btn-play">
+        <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="5,3 19,12 5,21"/></svg>
+        <span id="play-label">Start</span>
+      </button>
+      <button class="btn danger" id="btn-stop" title="Reset (R)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
+        <span class="btn-label">Reset</span>
+      </button>
+    </div>
+
+    <div class="ctrl-div"></div>
+
+    <div class="ctrl-group" style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:.1em;gap:4px;">
+      <span>SCROLL</span>
+      <button class="btn" id="btn-speed-down" title="Slower (↓)" style="padding:4px 9px;height:28px;font-size:16px;">−</button>
+      <span id="speed-display" style="color:var(--gold);min-width:18px;text-align:center;">3</span>
+      <button class="btn" id="btn-speed-up" title="Faster (↑)" style="padding:4px 9px;height:28px;font-size:16px;">+</button>
+    </div>
+
+    <div id="kbd-hint">
+      <kbd>Space</kbd> Play/Pause &nbsp;
+      <kbd>↑↓</kbd> Speed &nbsp;
+      <kbd>+−</kbd> Font &nbsp;
+      <kbd>M</kbd> Mirror &nbsp;
+      <kbd>F</kbd> Full &nbsp;
+      <kbd>R</kbd> Reset &nbsp;
+      <kbd>E</kbd> Edit
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════ -->
+  <footer id="footer">
+    <span>Created by <em>Imtiyaz Surjapuri</em></span>
+  </footer>
+
+</div><!-- /#app -->
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   SAMPLE SCRIPTS
+═══════════════════════════════════════════════════ */
+const SAMPLES = {
+  why_nda: {
+    title: "Why do you want to join the NDA?",
+    text: `From my earliest memories, I have been drawn to the idea of serving something larger than myself. The Indian Armed Forces represent the highest expression of that calling — discipline, courage, and an unbreakable commitment to the nation.
+
+I want to join the National Defence Academy because I believe that true leadership is forged in adversity. The NDA does not merely produce officers. It produces men of character — men who lead by example, who think clearly under pressure, and who place the welfare of their nation above personal comfort.
+
+I have prepared for this moment through years of physical training, academic study, and building mental resilience. I understand that the NDA will test every dimension of who I am. And I welcome that test.
+
+My goal is not simply to wear the uniform. My goal is to earn it — every single day — through excellence in service, integrity in action, and leadership that inspires those around me.
+
+India has given me everything. The NDA is how I give back.`
+  },
+  tell_yourself: {
+    title: "Tell me about yourself.",
+    text: `Sir, I am a 17-year-old student from [your city], currently completing my Class 12 in the Science stream. I come from a family that values hard work, discipline, and service.
+
+Academically, I have maintained strong performance in Mathematics and Physics — subjects that sharpen logical thinking and problem-solving ability.
+
+Beyond academics, I am actively involved in sports. I play cricket at the school level, which has taught me teamwork, perseverance, and how to perform under pressure.
+
+I believe my greatest strengths are my ability to remain calm in difficult situations, my drive to improve every single day, and my genuine passion for leadership.
+
+My interest in the armed forces began when I read about the sacrifices made during the Kargil War. That shaped my understanding of what it means to serve with honour.
+
+I am here today because I am ready — physically, mentally, and emotionally — to take on the challenge of the NDA. And I am committed to giving it everything I have.`
+  },
+  strengths: {
+    title: "What are your strengths and weaknesses?",
+    text: `My key strength is mental resilience. I have trained myself to stay composed under pressure, to assess situations clearly, and to act decisively even when the outcome is uncertain.
+
+I am also highly goal-oriented. When I set a target, I build a structured plan and follow it with discipline — not relying on motivation, but on commitment.
+
+My third strength is my ability to listen. A good leader listens first and speaks with purpose. I have worked hard to develop that quality.
+
+As for my weakness — I tend to be a perfectionist. There are times when I focus too much on getting every detail right, which can slow decision-making. I recognise this and I am actively working on it.
+
+I have learned to distinguish between situations that demand precision and situations that demand speed. That balance is something I continue to develop.
+
+I believe that honest self-awareness is not a weakness — it is the foundation of genuine growth.`
+  },
+  serve_nation: {
+    title: "Why do you want to serve the nation?",
+    text: `India is not merely a geographical territory to me. India is a living idea — 1.4 billion people, thousands of years of civilisation, and an extraordinary future ahead.
+
+That future must be protected. Borders must be secured. Citizens must be able to live, work, and dream in peace. That protection does not happen automatically. It is the result of men and women who choose, every single day, to stand between their country and every threat that faces it.
+
+I want to be one of those people.
+
+Service to the nation is not a sacrifice. It is a privilege. Not everyone is given the opportunity to contribute at this level — to be part of something that genuinely matters, that will shape the lives of people you will never meet but who will benefit from your commitment.
+
+I am motivated by duty. I am motivated by pride. And I am motivated by the belief that the highest form of a life well lived is one spent in service to others.
+
+That is why I am here.`
+  },
+  challenge: {
+    title: "Describe a challenge you overcame.",
+    text: `In Class 10, I suffered a serious knee injury during a district-level athletics competition. The doctor said I would need six weeks of complete rest.
+
+For someone who had trained physically every single day for three years, six weeks of immobility was not just physical pain — it was a test of psychological strength.
+
+I made a decision in the first week. I could not train my body, but I could train my mind. I used those six weeks to study military history, to read biographies of leaders I admired, and to develop a structured study plan for my board exams.
+
+When I returned to physical training, I was actually more focused than before — because I had learned something important. Preparation is not just physical. The mind is the first battlefield.
+
+I returned to full fitness in eight weeks — two weeks ahead of schedule. And I performed better academically that year than I had in any previous year.
+
+That experience taught me that adversity is not an obstacle. It is an opportunity to discover dimensions of yourself that comfort would never reveal.`
+  },
+  current_affairs: {
+    title: "India's Defence Priorities — Current Affairs",
+    text: `India's defence posture in the current era is defined by three strategic imperatives: technological modernisation, border security, and self-reliance in defence manufacturing.
+
+The Atmanirbhar Bharat initiative has transformed India's approach to defence procurement. Indigenous systems like the Tejas fighter aircraft, Arjun Main Battle Tank, and the INS Vikrant aircraft carrier represent a decisive shift away from import dependence.
+
+On the northern border, India continues to maintain heightened vigilance. Infrastructure development in forward areas — roads, tunnels, airstrips — has accelerated significantly.
+
+India's space and cyber defence capabilities are also expanding rapidly. The establishment of the Defence Space Agency reflects a clear-eyed understanding that future conflicts will be multi-domain.
+
+India's participation in joint exercises with nations like the United States, France, and Australia strengthens interoperability while preserving strategic autonomy.
+
+The core message is clear: India is building the capability and the will to defend its interests on every front.`
+  },
+  leadership: {
+    title: "Describe a time you showed leadership.",
+    text: `During our school's annual trekking expedition, our group of twelve students encountered an unexpected situation. Our assigned route was blocked due to a landslide, and the teacher accompanying us had suffered a mild sprain.
+
+In that moment, there was no one else to take charge. I stepped forward.
+
+I quickly assessed the situation: the resources we had, the alternative routes available, the physical condition of each team member, and the time remaining before daylight would fade.
+
+I divided the group into two smaller units, assigned specific roles to each person, and communicated a clear, calm plan. I made sure everyone understood what to do and why.
+
+We completed the trek safely, two hours later than planned but without any incident.
+
+What I learned was this: leadership is not about authority. It is about clarity. In uncertain moments, people do not need a commander — they need someone who can think clearly and communicate with confidence.
+
+That experience confirmed what I had always believed: I was built for this.`
+  },
+  role_model: {
+    title: "Who is your role model and why?",
+    text: `Field Marshal Sam Manekshaw is my role model.
+
+His contribution to India's military history is extraordinary. He led India to its most decisive military victory — the 1971 war that resulted in the creation of Bangladesh and the surrender of 93,000 Pakistani soldiers.
+
+But what inspires me most about Sam Manekshaw is not the victory itself. It is the character that made the victory possible.
+
+He was known for his courage to speak truth to power. When asked by the Prime Minister to go to war before the army was ready, he said no — clearly, firmly, respectfully. He knew that true loyalty to the nation meant giving honest counsel, not convenient agreement.
+
+He commanded the respect of every soldier under him not because of his rank, but because of his integrity, his wit, and his genuine care for the men who served with him.
+
+That combination of brilliance, honesty, and humanity — that is the kind of officer I aspire to become.`
+  }
+};
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+const state = {
+  running:      false,
+  paused:       false,
+  mirror:       false,
+  showLine:     true,
+  timerEnabled: true,
+  scrollY:      0,
+  rafId:        null,
+  speed:        3,
+  fontSize:     2.4,
+  lineHeight:   1.8,
+  scriptTitle:  '',
+  scriptText:   '',
+  lastTime:     null,
+};
+
+/* ═══════════════════════════════════════════════════
+   DOM
+═══════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+
+const el = {
+  editorPanel:  $('editor-panel'),
+  renameModal:  $('rename-modal'),
+  renameInput:  $('rename-input'),
+  appName:      $('app-name'),
+  editTitle:    $('edit-title'),
+  editText:     $('edit-text'),
+  displayTitle: $('display-title'),
+  displayText:  $('display-text'),
+  content:      $('prompter-content'),
+  scrollCont:   $('scroll-container'),
+  readingLine:  $('reading-line'),
+  statusBadge:  $('status-badge'),
+  progressBar:  $('progress-bar'),
+  countdownOvl: $('countdown-overlay'),
+  countdownNum: $('countdown-num'),
+  toast:        $('toast'),
+  topicSelect:  $('topic-select'),
+  sampleChips:  $('sample-chips'),
+  playBtn:      $('btn-play'),
+  playIcon:     $('play-icon'),
+  playLabel:    $('play-label'),
+  slSpeed:      $('sl-speed'),
+  slFont:       $('sl-font'),
+  slSpacing:    $('sl-spacing'),
+  speedVal:     $('speed-val'),
+  speedDisp:    $('speed-display'),
+  fontVal:      $('font-val'),
+  spacingVal:   $('spacing-val'),
+};
+
+/* ═══════════════════════════════════════════════════
+   BUILD SAMPLE CHIPS
+═══════════════════════════════════════════════════ */
+Object.entries(SAMPLES).forEach(([key, data]) => {
+  const chip = document.createElement('button');
+  chip.className = 'chip';
+  chip.textContent = data.title.length > 32 ? data.title.slice(0, 30) + '…' : data.title;
+  chip.addEventListener('click', () => loadSample(key));
+  el.sampleChips.appendChild(chip);
+});
+
+/* ═══════════════════════════════════════════════════
+   LOAD SAMPLE
+═══════════════════════════════════════════════════ */
+function loadSample(key) {
+  const s = SAMPLES[key];
+  if (!s) return;
+  el.editTitle.value = s.title;
+  el.editText.value  = s.text;
+  el.topicSelect.value = key;
+}
+
+/* ═══════════════════════════════════════════════════
+   TOPIC SELECT
+═══════════════════════════════════════════════════ */
+el.topicSelect.addEventListener('change', () => {
+  const v = el.topicSelect.value;
+  if (v !== 'custom') {
+    loadSample(v);
+    applyScript();
+    toast('Topic loaded ✓');
+  }
+});
+
+/* ═══════════════════════════════════════════════════
+   EDITOR
+═══════════════════════════════════════════════════ */
+$('btn-edit').addEventListener('click', openEditor);
+$('btn-cancel-edit').addEventListener('click', closeEditor);
+$('btn-done-edit').addEventListener('click', () => { applyScript(); closeEditor(); });
+$('btn-clear-text').addEventListener('click', () => {
+  el.editTitle.value = '';
+  el.editText.value  = '';
+  el.topicSelect.value = 'custom';
+});
+
+function openEditor() {
+  pauseScroll();
+  el.editTitle.value = state.scriptTitle;
+  el.editText.value  = state.scriptText;
+  el.editorPanel.classList.remove('hidden');
+  setTimeout(() => el.editTitle.focus(), 50);
+}
+
+function closeEditor() {
+  el.editorPanel.classList.add('hidden');
+}
+
+/* ═══════════════════════════════════════════════════
+   RENAME APP
+═══════════════════════════════════════════════════ */
+$('btn-rename').addEventListener('click', openRename);
+$('btn-rename-cancel').addEventListener('click', () => el.renameModal.classList.add('hidden'));
+$('btn-rename-save').addEventListener('click', saveRename);
+
+el.renameInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') saveRename();
+  if (e.key === 'Escape') el.renameModal.classList.add('hidden');
+});
+
+function openRename() {
+  pauseScroll();
+  el.renameInput.value = el.appName.textContent.replace(/\u2019/g, '');
+  el.renameModal.classList.remove('hidden');
+  setTimeout(() => el.renameInput.select(), 50);
+}
+
+function saveRename() {
+  const val = el.renameInput.value.trim();
+  if (!val) return;
+  // Split on first capital run for styled span
+  const parts = val.match(/^([A-Za-z\s]+?)([A-Z][a-z].*)?$/);
+  if (parts && parts[2]) {
+    el.appName.innerHTML = parts[1] + '<span>' + parts[2] + '</span>';
+  } else {
+    const mid = Math.ceil(val.length / 2);
+    el.appName.innerHTML = val.slice(0, mid) + '<span>' + val.slice(mid) + '</span>';
+  }
+  document.title = val + ' — NDA Interview Prep';
+  el.renameModal.classList.add('hidden');
+  toast('App renamed ✓');
+}
+
+/* ═══════════════════════════════════════════════════
+   APPLY SCRIPT
+═══════════════════════════════════════════════════ */
+function applyScript() {
+  const title = el.editTitle.value.trim() || 'NDA Interview Practice';
+  const text  = el.editText.value.trim()  || 'No script loaded. Tap Edit Script to add your content.';
+  state.scriptTitle = title;
+  state.scriptText  = text;
+  el.displayTitle.textContent = title;
+  el.displayText.innerHTML = formatText(text);
+  resetScroll();
+}
+
+function formatText(raw) {
+  return raw.split('\n\n')
+    .filter(p => p.trim())
+    .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+    .join('');
+}
+
+/* ═══════════════════════════════════════════════════
+   SCROLL ENGINE
+═══════════════════════════════════════════════════ */
+function getMaxScroll() {
+  return Math.max(0, el.content.scrollHeight - el.scrollCont.clientHeight);
+}
+
+function applyScroll() {
+  const mirror = state.mirror ? ' scaleX(-1)' : '';
+  el.content.style.transform = `translateY(${-state.scrollY}px)${mirror}`;
+}
+
+function resetScroll() {
+  stopScroll();
+  state.scrollY = 0;
+  state.running = false;
+  state.paused  = false;
+  applyScroll();
+  updateProgress(0);
+  setStatus('stopped');
+  setPlayBtn('start');
+}
+
+function startScroll() {
+  state.running  = true;
+  state.paused   = false;
+  state.lastTime = null;
+  setStatus('running');
+  setPlayBtn('pause');
+  el.rafId = requestAnimationFrame(scrollLoop);
+}
+
+function pauseScroll() {
+  if (!state.running) return;
+  state.paused  = true;
+  state.running = false;
+  cancelAnimationFrame(el.rafId);
+  setStatus('paused');
+  setPlayBtn('resume');
+}
+
+function stopScroll() {
+  state.running = false;
+  state.paused  = false;
+  cancelAnimationFrame(el.rafId);
+}
+
+function scrollLoop(ts) {
+  if (!state.running) return;
+  if (!state.lastTime) state.lastTime = ts;
+  const dt = ts - state.lastTime;
+  state.lastTime = ts;
+  state.scrollY += (state.speed * 28 * dt) / 1000;
+  const max = getMaxScroll();
+  if (state.scrollY >= max) {
+    state.scrollY = max;
+    applyScroll();
+    updateProgress(1);
+    stopScroll();
+    setStatus('stopped');
+    setPlayBtn('start');
+    toast('End of script ✓');
+    return;
+  }
+  applyScroll();
+  updateProgress(state.scrollY / max);
+  el.rafId = requestAnimationFrame(scrollLoop);
+}
+
+/* ═══════════════════════════════════════════════════
+   COUNTDOWN START
+═══════════════════════════════════════════════════ */
+function startWithCountdown() {
+  if (!state.scriptText) {
+    toast('⚠ No script — tap Edit Script first');
+    openEditor();
+    return;
+  }
+  if (!state.timerEnabled) { startScroll(); return; }
+
+  el.countdownOvl.classList.add('show');
+  let count = 3;
+  el.countdownNum.textContent = count;
+
+  const tick = setInterval(() => {
+    count--;
+    if (count > 0) {
+      el.countdownNum.textContent = count;
+      el.countdownNum.style.animation = 'none';
+      void el.countdownNum.offsetWidth;
+      el.countdownNum.style.animation = 'pulse-count 0.9s ease-out';
+    } else {
+      clearInterval(tick);
+      el.countdownOvl.classList.remove('show');
+      startScroll();
+    }
+  }, 900);
+}
+
+/* ═══════════════════════════════════════════════════
+   TRANSPORT BUTTONS
+═══════════════════════════════════════════════════ */
+el.playBtn.addEventListener('click', () => {
+  if (state.running)     pauseScroll();
+  else if (state.paused) startScroll();
+  else                   startWithCountdown();
+});
+
+$('btn-stop').addEventListener('click', () => { resetScroll(); toast('Reset ✓'); });
+
+/* ═══════════════════════════════════════════════════
+   HEADER TOGGLES
+═══════════════════════════════════════════════════ */
+// Timer toggle
+$('btn-timer').addEventListener('click', () => {
+  state.timerEnabled = !state.timerEnabled;
+  $('btn-timer').classList.toggle('toggle-on', state.timerEnabled);
+  toast(state.timerEnabled ? 'Countdown ON' : 'Countdown OFF');
+});
+
+// Mirror
+$('btn-mirror').addEventListener('click', () => {
+  state.mirror = !state.mirror;
+  $('btn-mirror').classList.toggle('toggle-on', state.mirror);
+  applyScroll();
+  toast(state.mirror ? 'Mirror ON' : 'Mirror OFF');
+});
+
+// Guide line
+$('btn-line').addEventListener('click', () => {
+  state.showLine = !state.showLine;
+  el.readingLine.classList.toggle('hidden', !state.showLine);
+  $('btn-line').classList.toggle('toggle-on', state.showLine);
+  toast(state.showLine ? 'Guide Line ON' : 'Guide Line OFF');
+});
+
+// Fullscreen
+$('btn-fullscreen').addEventListener('click', toggleFullscreen);
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen().catch(() => {});
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   SPEED +/- BUTTONS (bottom)
+═══════════════════════════════════════════════════ */
+$('btn-speed-up').addEventListener('click', () => changeSpeed(0.5));
+$('btn-speed-down').addEventListener('click', () => changeSpeed(-0.5));
+
+function changeSpeed(delta) {
+  state.speed = Math.min(10, Math.max(1, +(state.speed + delta).toFixed(1)));
+  el.slSpeed.value = state.speed;
+  el.speedVal.textContent = state.speed;
+  el.speedDisp.textContent = state.speed;
+  toast(`Speed: ${state.speed}`);
+}
+
+/* ═══════════════════════════════════════════════════
+   SLIDERS
+═══════════════════════════════════════════════════ */
+el.slSpeed.addEventListener('input', () => {
+  state.speed = parseFloat(el.slSpeed.value);
+  el.speedVal.textContent = state.speed;
+  el.speedDisp.textContent = state.speed;
+});
+
+el.slFont.addEventListener('input', () => {
+  state.fontSize = parseFloat(el.slFont.value);
+  el.fontVal.textContent = state.fontSize.toFixed(1);
+  document.documentElement.style.setProperty('--font-size', state.fontSize + 'rem');
+});
+
+el.slSpacing.addEventListener('input', () => {
+  state.lineHeight = parseFloat(el.slSpacing.value);
+  el.spacingVal.textContent = state.lineHeight.toFixed(2);
+  document.documentElement.style.setProperty('--line-height', state.lineHeight);
+});
+
+/* ═══════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+═══════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  const editorOpen = !el.editorPanel.classList.contains('hidden');
+  const modalOpen  = !el.renameModal.classList.contains('hidden');
+  if (editorOpen || modalOpen) return;
+
+  switch (e.code) {
+    case 'Space':      e.preventDefault(); el.playBtn.click(); break;
+    case 'ArrowUp':    e.preventDefault(); changeSpeed(0.5); break;
+    case 'ArrowDown':  e.preventDefault(); changeSpeed(-0.5); break;
+    case 'Equal':
+    case 'NumpadAdd':
+      e.preventDefault();
+      el.slFont.value = state.fontSize = Math.min(5, +(state.fontSize + 0.2).toFixed(1));
+      el.fontVal.textContent = state.fontSize.toFixed(1);
+      document.documentElement.style.setProperty('--font-size', state.fontSize + 'rem');
+      toast(`Font: ${state.fontSize}`);
+      break;
+    case 'Minus':
+    case 'NumpadSubtract':
+      e.preventDefault();
+      el.slFont.value = state.fontSize = Math.max(1.2, +(state.fontSize - 0.2).toFixed(1));
+      el.fontVal.textContent = state.fontSize.toFixed(1);
+      document.documentElement.style.setProperty('--font-size', state.fontSize + 'rem');
+      toast(`Font: ${state.fontSize}`);
+      break;
+    case 'KeyM': $('btn-mirror').click(); break;
+    case 'KeyF': toggleFullscreen(); break;
+    case 'KeyR': $('btn-stop').click(); break;
+    case 'KeyL': $('btn-line').click(); break;
+    case 'KeyT': $('btn-timer').click(); break;
+    case 'KeyE': openEditor(); break;
+    case 'KeyN': openRename(); break;
+  }
+});
+
+/* ═══════════════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════════════ */
+function setStatus(s) {
+  const b = el.statusBadge;
+  b.className = '';
+  if (s === 'running') { b.textContent = '● RUNNING'; b.className = 'running'; }
+  else if (s === 'paused') { b.textContent = '⏸ PAUSED'; b.className = 'paused'; }
+  else { b.textContent = '● STOPPED'; }
+}
+
+function setPlayBtn(mode) {
+  const icons = {
+    start:  '<polygon points="5,3 19,12 5,21"/>',
+    pause:  '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
+    resume: '<polygon points="5,3 19,12 5,21"/>'
+  };
+  el.playIcon.innerHTML = icons[mode];
+  el.playLabel.textContent = { start: 'Start', pause: 'Pause', resume: 'Resume' }[mode];
+}
+
+function updateProgress(ratio) {
+  el.progressBar.style.width = (ratio * 100) + '%';
+}
+
+let toastTimer;
+function toast(msg) {
+  el.toast.textContent = msg;
+  el.toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.toast.classList.remove('show'), 1700);
+}
+
+/* ═══════════════════════════════════════════════════
+   TOUCH MANUAL SCROLL
+═══════════════════════════════════════════════════ */
+let touchStartY = 0;
+
+el.scrollCont.addEventListener('touchstart', e => {
+  if (state.running) return;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+el.scrollCont.addEventListener('touchmove', e => {
+  if (state.running) return;
+  const dy = touchStartY - e.touches[0].clientY;
+  touchStartY = e.touches[0].clientY;
+  state.scrollY = Math.max(0, Math.min(getMaxScroll(), state.scrollY + dy));
+  applyScroll();
+  updateProgress(state.scrollY / Math.max(1, getMaxScroll()));
+}, { passive: true });
+
+el.scrollCont.addEventListener('wheel', e => {
+  if (state.running) return;
+  state.scrollY = Math.max(0, Math.min(getMaxScroll(), state.scrollY + e.deltaY));
+  applyScroll();
+  updateProgress(state.scrollY / Math.max(1, getMaxScroll()));
+}, { passive: true });
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+function init() {
+  const defaultKey = 'why_nda';
+  const s = SAMPLES[defaultKey];
+  state.scriptTitle = s.title;
+  state.scriptText  = s.text;
+  el.displayTitle.textContent = s.title;
+  el.displayText.innerHTML = formatText(s.text);
+  el.topicSelect.value = defaultKey;
+  el.editTitle.value   = s.title;
+  el.editText.value    = s.text;
+  el.editorPanel.classList.add('hidden');
+  el.renameModal.classList.add('hidden');
+  setTimeout(() => toast('Choose a topic or tap Edit Script to begin'), 400);
+}
+
+init();
+</script>
+</body>
+</html>
